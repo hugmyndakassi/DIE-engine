@@ -25,6 +25,25 @@
 GuiMainWindow::GuiMainWindow(QWidget *pParent) : QMainWindow(pParent), ui(new Ui::GuiMainWindow)
 {
     ui->setupUi(this);
+
+    XOptions::adjustToolButton(ui->toolButtonAbout, XOptions::ICONTYPE_INFO);
+    XOptions::adjustToolButton(ui->toolButtonOptions, XOptions::ICONTYPE_OPTION);
+    XOptions::adjustToolButton(ui->toolButtonDemangle, XOptions::ICONTYPE_DEMANGLE);
+    XOptions::adjustToolButton(ui->toolButtonExit, XOptions::ICONTYPE_EXIT);
+    XOptions::adjustToolButton(ui->toolButtonOpenFile, XOptions::ICONTYPE_OPENFILE, Qt::ToolButtonIconOnly);
+    XOptions::adjustToolButton(ui->toolButtonShortcuts, XOptions::ICONTYPE_SHORTCUT);
+    XOptions::adjustToolButton(ui->toolButtonRecentFiles, XOptions::ICONTYPE_LIST, Qt::ToolButtonIconOnly);
+
+    ui->toolButtonAbout->setToolTip(tr("About"));
+    ui->toolButtonOptions->setToolTip(tr("Options"));
+    ui->toolButtonDemangle->setToolTip(tr("Demangle"));
+    ui->toolButtonExit->setToolTip(tr("Exit"));
+    ui->toolButtonOpenFile->setToolTip(tr("Open file"));
+    ui->toolButtonShortcuts->setToolTip(tr("Shortcuts"));
+    ui->toolButtonRecentFiles->setToolTip(tr("Recent files"));
+    ui->lineEditFileName->setToolTip(tr("File name"));
+    ui->checkBoxAdvanced->setToolTip(tr("Advanced"));
+
 #ifdef USE_YARA
     XYara::initialize();
 #endif
@@ -85,6 +104,7 @@ GuiMainWindow::GuiMainWindow(QWidget *pParent) : QMainWindow(pParent), ui(new Ui
     g_xShortcuts.addGroup(XShortcuts::GROUPID_DISASM);
     g_xShortcuts.addGroup(XShortcuts::GROUPID_ARCHIVE);
     g_xShortcuts.addGroup(XShortcuts::GROUPID_SCAN);
+    g_xShortcuts.addGroup(XShortcuts::GROUPID_TABLE);
     g_xShortcuts.load();
 
     ui->widgetFormats->setGlobal(&g_xShortcuts, &g_xOptions);
@@ -128,12 +148,12 @@ GuiMainWindow::~GuiMainWindow()
 #endif
 }
 
-void GuiMainWindow::on_pushButtonExit_clicked()
+void GuiMainWindow::on_toolButtonExit_clicked()
 {
     exitSlot();
 }
 
-void GuiMainWindow::on_pushButtonAbout_clicked()
+void GuiMainWindow::on_toolButtonAbout_clicked()
 {
     DialogAbout dialogAbout(this);
     dialogAbout.setGlobal(&g_xShortcuts, &g_xOptions);
@@ -141,7 +161,7 @@ void GuiMainWindow::on_pushButtonAbout_clicked()
     dialogAbout.exec();
 }
 
-void GuiMainWindow::on_pushButtonOptions_clicked()
+void GuiMainWindow::on_toolButtonOptions_clicked()
 {
     DialogOptions dialogOptions(this, &g_xOptions, XOptions::GROUPID_FILE);
     dialogOptions.setGlobal(&g_xShortcuts, &g_xOptions);
@@ -152,7 +172,7 @@ void GuiMainWindow::on_pushButtonOptions_clicked()
     adjustFile();
 }
 
-void GuiMainWindow::on_pushButtonDemangle_clicked()
+void GuiMainWindow::on_toolButtonDemangle_clicked()
 {
     DialogDemangle dialogDemangle(this);
 
@@ -198,10 +218,10 @@ void GuiMainWindow::adjustFile()
 void GuiMainWindow::setAdvanced(bool bState)
 {
     if (bState) {
-        ui->pushButtonDemangle->show();
+        ui->toolButtonDemangle->show();
 
     } else {
-        ui->pushButtonDemangle->hide();
+        ui->toolButtonDemangle->hide();
     }
 
     ui->widgetFormats->setAdvanced(bState);
@@ -250,12 +270,12 @@ void GuiMainWindow::dropEvent(QDropEvent *event)
     }
 }
 
-void GuiMainWindow::on_pushButtonOpenFile_clicked()
+void GuiMainWindow::on_toolButtonOpenFile_clicked()
 {
     openFileSlot();
 }
 
-void GuiMainWindow::on_pushButtonShortcuts_clicked()
+void GuiMainWindow::on_toolButtonShortcuts_clicked()
 {
     DialogShortcuts dialogShortcuts(this);
     dialogShortcuts.setGlobal(&g_xShortcuts, &g_xOptions);
